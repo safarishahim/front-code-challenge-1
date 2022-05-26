@@ -1,0 +1,21 @@
+{
+  "name": "front-code-challenge-1",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "create-sample-data": "node faker.js",
+    "start": "node main.js"
+  },
+  "keywords": [],
+  "author": "Morteza Safarishahi",
+  "license": "MIT",
+  "devDependencies": {
+    "@faker-js/faker": "^7.1.0"
+  },
+  "dependencies": {
+    "body-parser": "^1.20.0",
+    "cors": "^2.8.5",
+    "express": "^4.18.1"
+  }
+}
