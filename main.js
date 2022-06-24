@@ -1,30 +1,33 @@
-const express = require('express')
-const cors = require('cors')
-const fs = require("fs");
+const express = require('express');
+const cors = require('cors');
+const fs = require('fs');
 const bodyParser = require('body-parser');
-const app = express()
-const port = 3009
-app.use(bodyParser.urlencoded({
-    extended: true
-}));
+const app = express();
+const port = 3009;
+app.use(
+    bodyParser.urlencoded({
+        extended: true,
+    })
+);
+
 app.use(bodyParser.json());
 app.use(bodyParser.raw());
-app.use(cors())
+app.use(cors());
 
 app.get('/api/users', (req, res) => {
     const users = JSON.parse(fs.readFileSync('./users.json'));
-    const page = Number(req.query.page || 0);
+    const page = Number(req.query.page || 1);
     const rowNumbers = Number(req.query.per_page || 20);
-    const startUsers = page * rowNumbers;
+    const startUsers = (page - 1) * rowNumbers;
     const usersList = users.slice(startUsers, startUsers + rowNumbers);
 
     res.send({
         users: usersList,
         page,
-        total: usersList.length,
+        total: users.length,
         per_page: rowNumbers,
-    })
-})
+    });
+});
 
 app.post('/api/users', (req, res) => {
     if (!req.body.first_name || !req.body.last_name || !req.body.mobile) {
@@ -46,26 +49,28 @@ app.post('/api/users', (req, res) => {
         date: new Date().toLocaleDateString(),
     };
 
-    users.push(newUser)
+    users.push(newUser);
 
-
-    fs.writeFileSync("users.json", JSON.stringify(users, null, 1), function (err) {
-        if (err) throw Error(err);
-        console.log('data created')
-    })
-
+    fs.writeFileSync(
+        'users.json',
+        JSON.stringify(users, null, 1),
+        function (err) {
+            if (err) throw Error(err);
+            console.log('data created');
+        }
+    );
 
     res.send({
         message: 'با موفقیت افزوده شد.',
         status: 201,
         data: newUser,
-    })
-})
+    });
+});
 
 app.delete('/api/users/:id', (req, res) => {
     const users = JSON.parse(fs.readFileSync('./users.json'));
     const userId = Number(req.params.id || 0);
-    const user = users.find(item => item.id === userId);
+    const user = users.find((item) => item.id === userId);
     if (!user) {
         res.status(404).send({
             message: 'کاربر یافت نشد',
@@ -74,20 +79,24 @@ app.delete('/api/users/:id', (req, res) => {
         return;
     }
 
-    const usersList = users.filter(item => item.id !== userId);
+    const usersList = users.filter((item) => item.id !== userId);
 
-    fs.writeFileSync("users.json", JSON.stringify(usersList, null, 1), function (err) {
-        if (err) throw Error(err);
-        console.log('data created')
-    })
+    fs.writeFileSync(
+        'users.json',
+        JSON.stringify(usersList, null, 1),
+        function (err) {
+            if (err) throw Error(err);
+            console.log('data created');
+        }
+    );
 
     res.send({
         message: 'با موفقیت حذف شد.',
         status: 200,
         user_id: userId,
-    })
-})
+    });
+});
 
 app.listen(port, () => {
-    console.log(`app listening on port ${port}`)
-})
+    console.log(`app listening on port ${port}`);
+});
