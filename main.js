@@ -21,7 +21,7 @@ app.get('/api/users', (req, res) => {
     res.send({
         users: usersList,
         page,
-        total: usersList.length,
+        total: users.length,
         per_page: rowNumbers,
     })
 })
